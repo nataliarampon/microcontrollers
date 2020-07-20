@@ -25,6 +25,7 @@
 #include <galileo2io.h>
 
 #include <math.h>
+#include <stdio.h>
 
 /**
 	Converts a period in ns to a frequency in Hz
@@ -57,6 +58,36 @@ int write_period_to_pwm_(int period, int pwm_pin) {
 int write_enable_to_pwm(int enable, int pwm_pin) {
     char data_str[80], file_str[80];
     snprintf(data_str, sizeof data_str, "%d", enable);
-    snprintf(file_str, sizeof file_str, "/sys/class/pwm/pwmchip0/pwm%d/enable",, pwm_pin);
+    snprintf(file_str, sizeof file_str, "/sys/class/pwm/pwmchip0/pwm%d/enable", pwm_pin);
+    return pputs(file_str, data_str);
+}
+
+/**
+    Writes duty cycle period in nanoseconds to the pwm pin pseudo-file
+    @param duty_cycle: duty cycle period in nanoseconds
+    @param pwm_pin: the number of the pwm pin
+    @return: the nunber of bytes written to the pwm pin pseudo-file
+**/
+int write_duty_cycle_to_pwm(int duty_cycle, int pwm_pin) {
+    char data_str[80], file_str[80];
+    snprintf(data_str, sizeof data_str, "%d", duty_cycle);
+    snprintf(file_str, sizeof file_str, "/sys/class/pwm/pwmchip0/pwm%d/duty_cycle", pwm_pin);
+    return pputs(file_str, data_str);
+}
+
+
+/**
+    Writes duty cycle period in nanoseconds to the pwm pin pseudo-file based on
+    a given pwm period and duty cycle percentage
+    @parm period: pwm period of this pin in nanoseconds
+    @param duty_cycle: duty cycle percentage (between 0 and 1), if outside allowed range, it's defaulted to zero
+    @param pwm_pin: the number of the pwm pin
+    @return: the nunber of bytes written to the pwm pin pseudo-file
+**/
+int write_duty_cycle_to_pwm_with_period(int period, float duty_cycle, int pwm_pin) {
+    char data_str[80], file_str[80];
+    if (duty_cycle < 0 || duty_cycle > 1) duty_cycle = 0;
+    snprintf(data_str, sizeof data_str, "%d", (int) round(duty_cycle*period));
+    snprintf(file_str, sizeof file_str, "/sys/class/pwm/pwmchip0/pwm%d/duty_cycle", pwm_pin);
     return pputs(file_str, data_str);
 }

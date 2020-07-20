@@ -33,6 +33,8 @@ extern "C"
 extern int frequency_to_period(int freq);
 extern int write_period_to_pwm_(int period, int pwm_pin);
 extern int write_enable_to_pwm(int enable, int pwm_pin);
+extern int write_duty_cycle_to_pwm(int duty_cycle, int pwm_pin);
+extern int write_duty_cycle_to_pwm_with_period(int period, float duty_cycle, int pwm_pin);
 
 #ifdef __cplusplus
 };
