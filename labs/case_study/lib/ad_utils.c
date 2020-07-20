@@ -132,3 +132,14 @@ int disable_timestamp() {
 int enable_timestamp() {
     return write_to_timestamp("1");
 }
+
+/**
+    Writes the given number of data points as the length of the A/D buffer
+    @param data_points: number of data points for the length of the buffer
+    @return: number of bytes written to the file
+**/
+int write_buffer_length(int data_points) {
+    char data_str[80];
+    snprintf(data_str, sizeof data_str, "%d", data_points);
+    return pputs("/sys/bus/iio/devices/iio:device0/buffer/length",data_str);
+}
