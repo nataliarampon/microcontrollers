@@ -51,3 +51,29 @@ int read_ad_raw(int ad_pin) {
 	pgets(data_str, sizeof data_str, file_str);
 	return atoi(data_str);
 }
+
+
+/**
+    Writes the given value to the buffer enable pseudo-file
+    @param enable: value (in a string) to be written
+    @return: number of bytes written to the file
+**/
+int write_enable_buffer(const char enable[]) {
+    return pputs("/sys/bus/iio/devices/iio:device0/buffer/enable", enable);
+}
+
+/**
+    Disables A/D continuous buffer
+    @return: number of bytes written to the file
+**/
+int disable_buffer(const char enable[]) {
+    return write_enable_buffer("0");
+}
+
+/**
+    Enables A/D continuous buffer
+    @return: number of bytes written to the file
+**/
+int enable_buffer(const char enable[]) {
+    return write_enable_buffer("1");
+}
