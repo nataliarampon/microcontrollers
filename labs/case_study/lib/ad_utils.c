@@ -25,6 +25,7 @@
 #include <ad_utils.h>
 
 #include <galileo2io.h>
+#include <byteswap.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -235,4 +236,13 @@ int get_samples(struct sensors *data, int data_points) {
     samples=read(fd,data,data_points*sizeof(struct sensors))/sizeof(struct sensors);   // effective number of data points
     close(fd);
     return samples;
+}
+
+/**
+    Swap endiannes and read the last 12 bits of a 16bit int
+    @param data: 16bit little endian data with 12 bits of useful data aligned at the bit 0
+    @return: the data as bigendian and with the four first bits zeroed out
+**/
+uint16_t reverse_12_oof_16_aligned_0(uint16_t data) {
+    return bswap_16(data) & LAST_12_BITS_MASK;
 }
