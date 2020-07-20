@@ -107,3 +107,28 @@ int disable_ad_pin(int ad_pin) {
 int enable_ad_pin(int ad_pin) {
     return write_enable_ad_pin(ad_pin, "1");
 }
+
+/**
+    Writes the given value to the timestamp pseudo-file
+    @param enable: value (in a string) to be written
+    @return: number of bytes written to the file
+**/
+int write_to_timestamp(char const enable[]) {
+    return pputs("/sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_en", enable);
+}
+
+/**
+    Disables timestamp
+    @return: number of bytes written to the file
+**/
+int disable_timestamp() {
+    return write_to_timestamp("0");
+}
+
+/**
+    Enables timestamp
+    @return: number of bytes written to the file
+**/
+int enable_timestamp() {
+    return write_to_timestamp("1");
+}
