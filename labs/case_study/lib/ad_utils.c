@@ -143,3 +143,15 @@ int write_buffer_length(int data_points) {
     snprintf(data_str, sizeof data_str, "%d", data_points);
     return pputs("/sys/bus/iio/devices/iio:device0/buffer/length",data_str);
 }
+
+/**
+    Sets the trigger as the current trigger
+    @param trigger: trigger number
+    @return: number of bytes written to the current_trigger pseudo-file
+**/
+int set_current_trigger(int trigger) {
+    char data_str[80], file_str[80];
+    snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/trigger%d/name", trigger);
+    pgets(data_str,sizeof data_str,file_str);
+    return pputs("/sys/bus/iio/devices/iio:device0/trigger/current_trigger",data_str);
+}
