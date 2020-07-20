@@ -39,3 +39,26 @@ int open_gpio_value_file(int gpio, int mode) {
     snprintf(file_str, sizeof file_str, "/sys/class/gpio/gpio%d/value", gpio);
     return open(file_str,mode);
 }
+
+/**
+    Read from a gpio pin
+    @param fd: the file descriptor for the GPIO value file
+    @return: the read value
+**/
+char read_gpio(int fd) {
+    char state;
+    lseek(fd,0,SEEK_SET);
+    read(fd,&state,sizeof state);
+    return state;
+}
+
+/**
+    Write to a gpio pin
+    @param fd: the file descriptor for the GPIO value file
+    @param state: the value to be written
+    @return: the amount of bytes written to the file
+**/
+int read_gpio(int fd, char state) {
+    lseek(fd,0,SEEK_SET);
+    return write(fd,&state,sizeof state);
+}
