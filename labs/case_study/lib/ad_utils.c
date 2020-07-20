@@ -159,6 +159,14 @@ int set_current_trigger(int trigger) {
 }
 
 /**
+    Disables trigger
+    @return: number of bytes written to the current_trigger pseudo-file
+**/
+int disable_trigger(int trigger) {
+    return pputs("/sys/bus/iio/devices/iio:device0/trigger/current_trigger","\n");
+}
+
+/**
     Converts a period in seconds to a frequency in Hz
     E.g.: to convert a sampling period into a sampling frequency
     @param period: period in seconds
