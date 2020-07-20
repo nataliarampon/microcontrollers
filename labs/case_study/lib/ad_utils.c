@@ -27,6 +27,7 @@
 #include <galileo2io.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <math.h>
 
 /**
@@ -189,4 +190,21 @@ int trigger_sysfs(int trigger) {
     char file_str[80];
     snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/trigger%d/trigger_now", trigger);
     return pputs(file_str,"1");
+}
+
+/**
+    Sleep for the given sampling period
+    @param sampling_period: sampling period in seconds
+**/
+void sleep_for_sampling_period(int sampling_period) {
+    usleep(ceil(sampling_period*1e6)); 
+}
+
+/**
+    Sleep for the total sampling time
+    @param sampling_period: sampling period in seconds
+    @param data_points: number of data_points
+**/
+void sleep_for_total_sampling_time(int sampling_period, int data_points) {
+    sleep(ceil(data_points*sampling_period));
 }
