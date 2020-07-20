@@ -27,6 +27,7 @@
 #include <galileo2io.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 /**
 	Read the scale to Volts for a given A/D pin
@@ -154,4 +155,38 @@ int set_current_trigger(int trigger) {
     snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/trigger%d/name", trigger);
     pgets(data_str,sizeof data_str,file_str);
     return pputs("/sys/bus/iio/devices/iio:device0/trigger/current_trigger",data_str);
+}
+
+/**
+    Converts a period in seconds to a frequency in Hz
+    E.g.: to convert a sampling period into a sampling frequency
+    @param period: period in seconds
+    @return: frequency in Hz
+**/
+int period_to_frequency(int period) {
+    return (int) round(1.0/period);
+}
+
+/**
+    Sets the sampling frequency for a trigger
+    @param trigger: trigger number
+    @param frequency: the frequency in Hz
+    @return: number of bytes written to the frequency pseudo-file
+**/
+int set_trigger_frequency(int trigger, int frequency) {
+    char data_str[80], file_str[80];
+    snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/trigger%d/frequency", trigger);
+    snprintf(data_str, sizeof data_str, "%d", frequency);
+    return pputs(file_str,data_str);
+}
+
+/**
+    Trigger the sysfs trigger
+    @param trigger: trigger number
+    @return: number of bytes written to the trigger_now pseudo-file
+**/
+int trigger_sysfs(int trigger) {
+    char file_str[80];
+    snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/trigger%d/trigger_now", trigger);
+    return pputs(file_str,"1");
 }
