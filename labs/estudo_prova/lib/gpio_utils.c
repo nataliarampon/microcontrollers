@@ -26,7 +26,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <fctnl.h>
+#include <fcntl.h>
 
 /**
     Open value pseudo-file for a given gpio pin
@@ -58,7 +58,7 @@ char read_gpio(int fd) {
     @param state: the value to be written
     @return: the amount of bytes written to the file
 **/
-int read_gpio(int fd, char state) {
+int write_gpio(int fd, char state) {
     lseek(fd,0,SEEK_SET);
     return write(fd,&state,sizeof state);
 }
