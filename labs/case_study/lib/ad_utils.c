@@ -77,3 +77,33 @@ int disable_buffer(const char enable[]) {
 int enable_buffer(const char enable[]) {
     return write_enable_buffer("1");
 }
+
+/**
+    Writes the given value to the voltage enable pseudo-file of the AD pin
+    @param ad_pin: number of the ad pin
+    @param enable: value (in a string) to be written
+    @return: number of bytes written to the file
+**/
+int write_enable_ad_pin(int ad_pin, char const enable[]) {
+    char file_str[80];
+    snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/iio:device0/scan_elements/in_voltage%d_en", ad_pin);
+    return pputs(file_str, enable);
+}
+
+/**
+    Disables given AD pin
+    @param ad_pin: number of the ad pin
+    @return: number of bytes written to the file
+**/
+int disable_ad_pin(int ad_pin) {
+    return write_enable_ad_pin(ad_pin, "0");
+}
+
+/**
+    Enables given AD pin
+    @param ad_pin: number of the ad pin
+    @return: number of bytes written to the file
+**/
+int enable_ad_pin(int ad_pin) {
+    return write_enable_ad_pin(ad_pin, "1");
+}
