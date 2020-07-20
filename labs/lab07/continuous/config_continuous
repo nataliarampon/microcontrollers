@@ -1,0 +1,126 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          config_continuous
+# Required-Start:    
+# Should-Start:      
+# Required-Stop:     
+# Default-Start:     S
+# Default-Stop:
+# Short-Description: Configures GPIO for Lab 07.
+# Description:       Configures GPIO for Lab 07.
+### END INIT INFO
+
+boardId=`cat /sys/devices/virtual/dmi/id/board_name`
+
+case "$1" in
+  start|restart|force-reload)
+    case $boardId in
+      "Galileo")
+  if [ ! -d /sys/class/gpio/gpio37 ] ; then
+	    echo -n "37" > /sys/class/gpio/export
+	fi
+	echo -n "out" > /sys/class/gpio/gpio37/direction
+	echo -n "0" > /sys/class/gpio/gpio37/value
+
+  if [ ! -d /sys/class/gpio/gpio36 ] ; then
+      echo -n "36" > /sys/class/gpio/export
+  fi
+  echo -n "out" > /sys/class/gpio/gpio36/direction
+  echo -n "0" > /sys/class/gpio/gpio36/value
+
+  if [ ! -d /sys/class/gpio/gpio23 ] ; then
+      echo -n "23" > /sys/class/gpio/export
+  fi
+  echo -n "out" > /sys/class/gpio/gpio23/direction
+  echo -n "0" > /sys/class/gpio/gpio23/value
+
+  if [ ! -d /sys/class/gpio/gpio22 ] ; then
+      echo -n "22" > /sys/class/gpio/export
+  fi
+  echo -n "out" > /sys/class/gpio/gpio22/direction
+  echo -n "0" > /sys/class/gpio/gpio22/value
+	
+  # gpio44 = in = neither pull-up nor pull-down (apparently)
+	if [ ! -d /sys/class/gpio/gpio44 ] ; then
+      echo -n "44" > /sys/class/gpio/export
+  fi
+  echo -n "in" > /sys/class/gpio/gpio44/direction
+
+  if [ ! -d /sys/class/gpio/gpio45 ] ; then
+      echo -n "45" > /sys/class/gpio/export
+  fi
+  echo -n "in" > /sys/class/gpio/gpio45/direction
+
+  if [ ! -d /sys/class/gpio/gpio46 ] ; then
+      echo -n "46" > /sys/class/gpio/export
+  fi
+  echo -n "in" > /sys/class/gpio/gpio46/direction
+
+  if [ ! -d /sys/class/gpio/gpio47 ] ; then
+      echo -n "47" > /sys/class/gpio/export
+  fi
+  echo -n "in" > /sys/class/gpio/gpio47/direction
+
+  for i in {0..3}; do
+    chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage"$i"_scale
+    chgrp adc /sys/bus/iio/devices/iio:device0/scan_elements/in_voltage"$i"_en
+    chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage"$i"_scale
+    chmod g+rw /sys/bus/iio/devices/iio:device0/scan_elements/in_voltage"$i"_en
+  done;
+
+  chgrp adc /dev/iio:device0
+  chmod g+r /dev/iio:device0
+
+  chgrp adc /sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_en
+  chgrp adc /sys/bus/iio/devices/iio:device0/buffer/length
+  chgrp adc /sys/bus/iio/devices/iio:device0/buffer/enable
+  chgrp adc /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+  chmod g+rw /sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_en
+  chmod g+rw /sys/bus/iio/devices/iio:device0/buffer/length
+  chmod g+rw /sys/bus/iio/devices/iio:device0/buffer/enable
+  chmod g+rw /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+
+  modprobe iio-trig-sysfs
+  echo -n "0" > /sys/bus/iio/devices/iio_sysfs_trigger/add_trigger
+  chgrp adc /sys/bus/iio/devices/trigger0/trigger_now
+  chmod g+rw /sys/bus/iio/devices/trigger0/trigger_now
+
+  modprobe iio-trig-hrtimer
+  echo -n "1" > /sys/bus/iio/devices/iio_hrtimer_trigger/add_trigger
+  chgrp adc /sys/bus/iio/devices/trigger1/frequency
+  chmod g+rw /sys/bus/iio/devices/trigger1/frequency
+
+    ;;
+    esac
+    ;;
+  stop)
+    case $boardId in
+      "Galileo")
+  echo "\n" > /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+  echo -n "1" > /sys/bus/iio/devices/iio_hrtimer_trigger/remove_trigger
+  echo -n "0" > /sys/bus/iio/devices/iio_sysfs_trigger/remove_trigger
+  rmmod iio-trig-sysfs
+  rmmod iio-trig-hrtimer
+  
+	echo -n "37" > /sys/class/gpio/unexport
+  echo -n "44" > /sys/class/gpio/unexport
+  echo -n "36" > /sys/class/gpio/unexport
+  echo -n "45" > /sys/class/gpio/unexport
+	echo -n "23" > /sys/class/gpio/unexport
+  echo -n "46" > /sys/class/gpio/unexport
+  echo -n "22" > /sys/class/gpio/unexport
+  echo -n "47" > /sys/class/gpio/unexport
+  ;;
+    esac
+    ;;
+  status)
+    cat /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+    ;;
+  *)
+    echo -n "Usage: $0 " 
+    echo "{start|stop|restart|force-reload|status}"
+    exit 1
+    ;;
+esac
+
+exit 0
