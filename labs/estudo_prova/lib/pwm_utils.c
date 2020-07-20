@@ -47,3 +47,16 @@ int write_period_to_pwm_(int period, int pwm_pin) {
     snprintf(file_str, sizeof file_str, "/sys/class/pwm/pwmchip0/pwm%d/period", pwm_pin);
     return pputs(file_str, data_str);
 }
+
+/**
+    Writes enable value to the pwm pin pseudo-file
+    @param enable: the enable value, either 1 or 0
+    @param pwm_pin: the number of the pwm pin
+    @return: the number of bytes written to the pwm pin pseudo-file
+**/
+int write_enable_to_pwm(int enable, int pwm_pin) {
+    char data_str[80], file_str[80];
+    snprintf(data_str, sizeof data_str, "%d", enable);
+    snprintf(file_str, sizeof file_str, "/sys/class/pwm/pwmchip0/pwm%d/enable",, pwm_pin);
+    return pputs(file_str, data_str);
+}
