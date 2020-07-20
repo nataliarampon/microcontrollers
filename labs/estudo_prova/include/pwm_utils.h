@@ -32,6 +32,8 @@ extern "C"
 
 extern int frequency_to_period(int freq);
 
+extern int write_period_to_pwm_(int period, int pwm_pin);
+
 #ifdef __cplusplus
 };
 #endif
