@@ -1,7 +1,7 @@
 /*
-  i2c_write_reg.c: Writes a register in a slave I2C device.
+  gpio_utils.h: Utility functions for Galileo GPIO
   
-  Copyright (c) 2016 Walter Fetter Lages <w.fetter@ieee.org>
+  Copyright (c) 2020 Natalia Gubiani Rampon <ngrampon@inf.ufrgs.br>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,20 @@
 
 */
 
-#include <unistd.h>
-#include <i2cutil.h>
+#ifndef GPIO_UTILS_H
+#define GPIO_UTILS_H
 
-int i2c_write_reg(int fd,unsigned char reg,unsigned char data)
+#ifdef __cplusplus
+extern "C"
 {
-        unsigned char buf[]={reg,data};
-        
-        return write(fd,buf,sizeof buf);
-}
+#endif
+
+extern int open_gpio_value_file(int gpio, int mode);
+extern char read_gpio(int fd);
+extern int write_gpio(int fd, char state);
+
+#ifdef __cplusplus
+};
+#endif
+
+#endif

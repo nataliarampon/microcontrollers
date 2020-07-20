@@ -1,5 +1,5 @@
 /*
-  ad_utils.c: Utility functions for Galileo A/D conversor
+  int_utils.h: Utility functions for Galileo interruptions
   
   Copyright (c) 2020 Natalia Gubiani Rampon <ngrampon@inf.ufrgs.br>
 
@@ -22,32 +22,21 @@
 
 */
 
-#include <ad_utils.h>
+#ifndef INT_UTILS_H
+#define INT_UTILS_H
 
-#include <galileo2io.h>
-#include <stdio.h>
-#include <stdlib.h>
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-/**
-	Read the scale to Volts for a given A/D pin
-	@param ad_pin: the A/D pin to read from
-	@return: the scale
-**/
-float read_ad_scale(int ad_pin) {
-	char data_str[80], file_str[80];
-	snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/iio:device0/in_voltage%d_scale", ad_pin);
-	pgets(data_str, sizeof data_str, file_str);
-	return atof(data_str)/CONV_MV_TO_VOLTS;
-}
+extern int write_int_edge(int gpio, const char edge[]);
+extern int config_rising_edge(int gpio);
+extern int config_falling_edge(int gpio);
+extern int disable_interruption(int gpio);
 
-/**
-	Read the raw value for a given A/D pin
-	@param ad_pin: the A/D pin to read from
-	@return: the raw value
-**/
-int read_ad_raw(int ad_pin) {
-	char data_str[80], file_str[80];
-	snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/iio:device0/in_voltage%d_raw", ad_pin);
-	pgets(data_str, sizeof data_str, file_str);
-	return atoi(data_str);
-}
+#ifdef __cplusplus
+};
+#endif
+
+#endif
