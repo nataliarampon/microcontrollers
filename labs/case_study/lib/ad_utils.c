@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <math.h>
 
 /**
@@ -215,4 +216,23 @@ void sleep_for_sampling_period(int sampling_period) {
 **/
 void sleep_for_total_sampling_time(int sampling_period, int data_points) {
     sleep(ceil(data_points*sampling_period));
+}
+
+/**
+    Read data_point samples into the struct sensors array
+    @param/@return data: array of struct sensors to be read
+    @param data_points: number of data_points to be read
+    @return: number of samples effectively read into the data array
+**/
+int get_samples(struct sensors *data, int data_points) {
+    int fd, samples;
+
+    if((fd=open("/dev/iio:device0",O_RDONLY)) < 0){
+        perror("Opening /dev/iio:device0:");
+        return -1;
+    }
+
+    samples=read(fd,data,data_points*sizeof(struct sensors))/sizeof(struct sensors);   // effective number of data points
+    close(fd);
+    return samples;
 }
