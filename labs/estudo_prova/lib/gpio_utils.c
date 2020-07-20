@@ -1,5 +1,5 @@
 /*
-  ad_utils.c: Utility functions for Galileo A/D conversor
+  gpio_utils.c: Utility functions for Galileo GPIO
   
   Copyright (c) 2020 Natalia Gubiani Rampon <ngrampon@inf.ufrgs.br>
 
@@ -22,32 +22,20 @@
 
 */
 
-#include <ad_utils.h>
+#include <gpio_utils.h>
 
-#include <galileo2io.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <unistd.h>
+#include <fctnl.h>
 
 /**
-	Read the scale to Volts for a given A/D pin
-	@param ad_pin: the A/D pin to read from
-	@return: the scale
+    Open value pseudo-file for a given gpio pin
+    @param gpio: the GPIO pin number
+    @param mode: the write/read mode (O_WRONLY, O_RDONLY, O_RDWR)
+    @return: the file descriptor
 **/
-float read_ad_scale(int ad_pin) {
-	char data_str[80], file_str[80];
-	snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/iio:device0/in_voltage%d_scale", ad_pin);
-	pgets(data_str, sizeof data_str, file_str);
-	return atof(data_str)/CONV_MV_TO_VOLTS;
-}
-
-/**
-	Read the raw value for a given A/D pin
-	@param ad_pin: the A/D pin to read from
-	@return: the raw value
-**/
-int read_ad_raw(int ad_pin) {
-	char data_str[80], file_str[80];
-	snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/iio:device0/in_voltage%d_raw", ad_pin);
-	pgets(data_str, sizeof data_str, file_str);
-	return atoi(data_str);
+int open_gpio_value_file(int gpio, int mode) {
+    char file_str[80];
+    snprintf(file_str, sizeof file_str, "/sys/class/gpio/gpio%d/value", gpio);
+    return open(file_str,mode);
 }
