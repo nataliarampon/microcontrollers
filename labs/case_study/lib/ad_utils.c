@@ -66,7 +66,7 @@ int write_enable_buffer(const char enable[]) {
     Disables A/D continuous buffer
     @return: number of bytes written to the file
 **/
-int disable_buffer(const char enable[]) {
+int disable_buffer() {
     return write_enable_buffer("0");
 }
 
@@ -74,7 +74,7 @@ int disable_buffer(const char enable[]) {
     Enables A/D continuous buffer
     @return: number of bytes written to the file
 **/
-int enable_buffer(const char enable[]) {
+int enable_buffer() {
     return write_enable_buffer("1");
 }
 
