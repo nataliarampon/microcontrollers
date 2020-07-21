@@ -1,6 +1,6 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          config_pwm_led
+# Provides:          config_main
 # Required-Start:    
 # Should-Start:      
 # Required-Stop:     

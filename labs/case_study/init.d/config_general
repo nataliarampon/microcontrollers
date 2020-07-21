@@ -1,0 +1,237 @@
+####################################
+# IO3 GPIO OUT (Turn on LED)
+####################################
+if [ ! -d /sys/class/gpio/gpio30 ] ; then
+    echo -n "30" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio30/direction
+echo -n "1" > /sys/class/gpio/gpio30/value
+
+if [ ! -d /sys/class/gpio/gpio18 ] ; then
+	    echo -n "18" > /sys/class/gpio/export
+	fi
+echo -n "out" > /sys/class/gpio/gpio18/direction
+echo -n "strong" > /sys/class/gpio/gpio18/drive
+chgrp gpio /sys/class/gpio/gpio18/value
+chmod g+rw /sys/class/gpio/gpio18/value
+
+# UNEXPORT
+echo -n "in" > /sys/class/gpio/gpio18/direction
+echo -n "18" > /sys/class/gpio/unexport
+echo -n "30" > /sys/class/gpio/unexport
+
+####################################
+# IO2 GPIO IN (Read Push Button)
+####################################
+if [ ! -d /sys/class/gpio/gpio31 ] ; then
+    echo -n "31" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio31/direction
+echo -n "1" > /sys/class/gpio/gpio31/value
+
+if [ ! -d /sys/class/gpio/gpio32 ] ; then
+	echo -n "32" > /sys/class/gpio/export
+fi
+echo -n "in" > /sys/class/gpio/gpio32/direction
+echo -n "hiz" > /sys/class/gpio/gpio32/drive
+chgrp gpio /sys/class/gpio/gpio32/value
+chmod g+r /sys/class/gpio/gpio32/value	
+
+# UNEXPORT
+echo -n "32" > /sys/class/gpio/unexport
+echo -n "hiz" > /sys/class/gpio/gpio32/drive
+echo -n "31" > /sys/class/gpio/unexport
+
+####################################
+# IO3 INTERRUPTION  RISING (Push button)
+####################################
+if [ ! -d /sys/class/gpio/gpio30 ] ; then
+    echo -n "30" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio30/direction
+echo -n "0" > /sys/class/gpio/gpio30/value
+
+if [ ! -d /sys/class/gpio/gpio15 ] ; then
+    echo -n "15" > /sys/class/gpio/export
+fi
+echo -n "in" > /sys/class/gpio/gpio15/direction
+echo -n "rising" > /sys/class/gpio/gpio15/edge
+chgrp gpio /sys/class/gpio/gpio15/edge
+chmod g+rw /sys/class/gpio/gpio15/edge
+chgrp gpio /sys/class/gpio/gpio15/value
+chmod g+r /sys/class/gpio/gpio15/value
+
+# UNEXPORT
+echo -n "1" > /sys/class/gpio/gpio30/value
+echo -n "30" > /sys/class/gpio/unexport
+echo -n "none" > /sys/class/gpio/gpio15/edge
+echo -n "15" > /sys/class/gpio/unexport
+
+####################################
+# IO2 INTERRUPTION  RISING (Push button)
+####################################
+if [ ! -d /sys/class/gpio/gpio31 ] ; then
+    echo -n "31" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio31/direction
+echo -n "0" > /sys/class/gpio/gpio31/value
+
+if [ ! -d /sys/class/gpio/gpio14 ] ; then
+    echo -n "14" > /sys/class/gpio/export
+fi
+echo -n "in" > /sys/class/gpio/gpio14/direction
+echo -n "rising" > /sys/class/gpio/gpio14/edge
+chgrp gpio /sys/class/gpio/gpio14/edge
+chmod g+rw /sys/class/gpio/gpio14/edge
+chgrp gpio /sys/class/gpio/gpio14/value
+chmod g+r /sys/class/gpio/gpio14/value
+
+# UNEXPORT
+echo -n "1" > /sys/class/gpio/gpio31/value
+echo -n "31" > /sys/class/gpio/unexport
+echo -n "none" > /sys/class/gpio/gpio14/edge
+echo -n "14" > /sys/class/gpio/unexport
+
+####################################
+# PWM3 / IO3
+####################################
+if [ ! -d /sys/class/gpio/gpio30 ] ; then
+    echo -n "30" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio30/direction
+echo -n "1" > /sys/class/gpio/gpio30/value
+
+if [ ! -d /sys/class/pwm/pwmchip0/pwm3 ] ; then
+	echo -n "3" > /sys/class/pwm/pwmchip0/export
+fi
+
+chgrp pwm /sys/class/pwm/pwmchip0/pwm3/period
+chgrp pwm /sys/class/pwm/pwmchip0/pwm3/enable
+chgrp pwm /sys/class/pwm/pwmchip0/pwm3/duty_cycle
+chgrp pwm /sys/class/pwm/pwmchip0/device/pwm_period
+chmod g+rw /sys/class/pwm/pwmchip0/pwm3/period
+chmod g+rw /sys/class/pwm/pwmchip0/pwm3/enable
+chmod g+rw /sys/class/pwm/pwmchip0/pwm3/duty_cycle
+chmod g+rw /sys/class/pwm/pwmchip0/device/pwm_period
+
+# UNEXPORT
+echo -n "0" > /sys/class/pwm/pwmchip0/pwm3/enable
+echo -n "3" > /sys/class/pwm/pwmchip0/unexport
+echo -n "30" > /sys/class/gpio/unexport
+
+####################################
+## A0 UNIQUE 
+####################################
+if [ ! -d /sys/class/gpio/gpio37 ] ; then
+    echo -n "37" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio37/direction
+echo -n "0" > /sys/class/gpio/gpio37/value
+
+# gpio44 = in = neither pull-up nor pull-down
+if [ ! -d /sys/class/gpio/gpio44 ] ; then
+  echo -n "44" > /sys/class/gpio/export
+fi
+echo -n "in" > /sys/class/gpio/gpio44/direction
+
+chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage0_raw
+chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage0_scale
+chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage0_raw
+chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage0_scale
+
+# UNEXPORT
+echo -n "37" > /sys/class/gpio/unexport
+echo -n "44" > /sys/class/gpio/unexport
+
+####################################
+## A0,A1,A2,A3 CONTINUOUS
+####################################
+if [ ! -d /sys/class/gpio/gpio37 ] ; then
+    echo -n "37" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio37/direction
+echo -n "0" > /sys/class/gpio/gpio37/value
+
+# gpio44 = in = neither pull-up nor pull-down (apparently)
+if [ ! -d /sys/class/gpio/gpio44 ] ; then
+  echo -n "44" > /sys/class/gpio/export
+fi
+echo -n "in" > /sys/class/gpio/gpio44/direction
+
+if [ ! -d /sys/class/gpio/gpio36 ] ; then
+  echo -n "36" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio36/direction
+echo -n "0" > /sys/class/gpio/gpio36/value
+
+if [ ! -d /sys/class/gpio/gpio45 ] ; then
+  echo -n "45" > /sys/class/gpio/export
+fi
+echo -n "in" > /sys/class/gpio/gpio45/direction
+
+if [ ! -d /sys/class/gpio/gpio23 ] ; then
+  echo -n "23" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio23/direction
+echo -n "0" > /sys/class/gpio/gpio23/value
+
+if [ ! -d /sys/class/gpio/gpio46 ] ; then
+  echo -n "46" > /sys/class/gpio/export
+fi
+echo -n "in" > /sys/class/gpio/gpio46/direction
+
+if [ ! -d /sys/class/gpio/gpio22 ] ; then
+  echo -n "22" > /sys/class/gpio/export
+fi
+echo -n "out" > /sys/class/gpio/gpio22/direction
+echo -n "0" > /sys/class/gpio/gpio22/value
+
+if [ ! -d /sys/class/gpio/gpio47 ] ; then
+  echo -n "47" > /sys/class/gpio/export
+fi
+echo -n "in" > /sys/class/gpio/gpio47/direction
+
+for i in {0..3}; do
+chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage"$i"_scale
+chgrp adc /sys/bus/iio/devices/iio:device0/scan_elements/in_voltage"$i"_en
+chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage"$i"_scale
+chmod g+rw /sys/bus/iio/devices/iio:device0/scan_elements/in_voltage"$i"_en
+done;
+
+chgrp adc /dev/iio:device0
+chmod g+r /dev/iio:device0
+
+chgrp adc /sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_en
+chgrp adc /sys/bus/iio/devices/iio:device0/buffer/length
+chgrp adc /sys/bus/iio/devices/iio:device0/buffer/enable
+chgrp adc /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+chmod g+rw /sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_en
+chmod g+rw /sys/bus/iio/devices/iio:device0/buffer/length
+chmod g+rw /sys/bus/iio/devices/iio:device0/buffer/enable
+chmod g+rw /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+
+modprobe iio-trig-sysfs
+echo -n "0" > /sys/bus/iio/devices/iio_sysfs_trigger/add_trigger
+chgrp adc /sys/bus/iio/devices/trigger0/trigger_now
+chmod g+rw /sys/bus/iio/devices/trigger0/trigger_now
+
+modprobe iio-trig-hrtimer
+echo -n "1" > /sys/bus/iio/devices/iio_hrtimer_trigger/add_trigger
+chgrp adc /sys/bus/iio/devices/trigger1/frequency
+chmod g+rw /sys/bus/iio/devices/trigger1/frequency
+
+# UNEXPORT
+echo "\n" > /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+echo -n "1" > /sys/bus/iio/devices/iio_hrtimer_trigger/remove_trigger
+echo -n "0" > /sys/bus/iio/devices/iio_sysfs_trigger/remove_trigger
+rmmod iio-trig-sysfs
+rmmod iio-trig-hrtimer
+
+echo -n "37" > /sys/class/gpio/unexport
+echo -n "44" > /sys/class/gpio/unexport
+echo -n "36" > /sys/class/gpio/unexport
+echo -n "45" > /sys/class/gpio/unexport
+echo -n "23" > /sys/class/gpio/unexport
+echo -n "46" > /sys/class/gpio/unexport
+echo -n "22" > /sys/class/gpio/unexport
+echo -n "47" > /sys/class/gpio/unexport
