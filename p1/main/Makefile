@@ -3,7 +3,7 @@ SRCS=$(TARGET).c
 
 #FLAGS=-O2 -Wall -g -MMD -DTRIG_SYSFS
 FLAGS=-O2 -Wall -g -MMD
-INCLUDE=-I. -I./../include
+INCLUDE=-I. -I../include
 LIBDIR=-L../lib
 LIBS=-lgalileo2 -lm
 
