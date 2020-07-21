@@ -1,0 +1,86 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          config_pwm_led
+# Required-Start:    
+# Should-Start:      
+# Required-Stop:     
+# Default-Start:     S
+# Default-Stop:
+# Short-Description: Configures GPIO for ENG10032 2020/1 First Exam.
+# Description:       Configures GPIO for ENG10032 2020/1 First Exam.
+### END INIT INFO
+
+boardId=`cat /sys/devices/virtual/dmi/id/board_name`
+
+case "$1" in
+  start|restart|force-reload)
+    case $boardId in
+      "Galileo")
+  if [ ! -d /sys/class/gpio/gpio30 ] ; then
+	    echo -n "30" > /sys/class/gpio/export
+	fi
+	echo -n "out" > /sys/class/gpio/gpio30/direction
+	echo -n "1" > /sys/class/gpio/gpio30/value
+
+  if [ ! -d /sys/class/gpio/gpio37 ] ; then
+      echo -n "37" > /sys/class/gpio/export
+  fi
+  echo -n "out" > /sys/class/gpio/gpio37/direction
+  echo -n "0" > /sys/class/gpio/gpio37/value
+
+  if [ ! -d /sys/class/gpio/gpio44 ] ; then
+      echo -n "44" > /sys/class/gpio/export
+  fi
+  echo -n "in" > /sys/class/gpio/gpio44/direction
+	
+	if [ ! -d /sys/class/pwm/pwmchip0/pwm3 ] ; then
+		echo -n "3" > /sys/class/pwm/pwmchip0/export
+	fi
+
+	chgrp pwm /sys/class/pwm/pwmchip0/pwm3/period
+	chgrp pwm /sys/class/pwm/pwmchip0/pwm3/enable
+  chgrp pwm /sys/class/pwm/pwmchip0/pwm3/duty_cycle
+  chgrp pwm /sys/class/pwm/pwmchip0/device/pwm_period
+	chmod g+rw /sys/class/pwm/pwmchip0/pwm3/period
+	chmod g+rw /sys/class/pwm/pwmchip0/pwm3/enable
+  chmod g+rw /sys/class/pwm/pwmchip0/pwm3/duty_cycle
+	chmod g+rw /sys/class/pwm/pwmchip0/device/pwm_period
+  
+  chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage0_raw
+  chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage0_scale
+  chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage0_raw
+  chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage0_scale
+    ;;
+    esac
+    ;;
+  stop)
+    case $boardId in
+      "Galileo")
+	echo -n "0" > /sys/class/pwm/pwmchip0/pwm3/enable
+  echo -n "3" > /sys/class/pwm/pwmchip0/unexport
+	echo -n "30" > /sys/class/gpio/unexport
+  echo -n "37" > /sys/class/gpio/unexport
+  echo -n "44" > /sys/class/gpio/unexport
+	;;
+    esac
+    ;;
+  status)
+    echo -n Period:
+    case $boardId in
+      "Galileo")
+        cat /sys/class/pwm/pwmchip0/pwm3/period
+        ;;
+    esac
+    echo -n Duty Cicle:
+    cat /sys/class/pwm/pwmchip0/pwm3/duty_cycle
+    echo -n Enable:
+    cat /sys/class/pwm/pwmchip0/pwm3/enable
+    ;;
+  *)
+    echo -n "Usage: $0 " 
+    echo "{start|stop|restart|force-reload|status}"
+    exit 1
+    ;;
+esac
+
+exit 0
