@@ -1,0 +1,83 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          config_photosensor_amop
+# Required-Start:    
+# Should-Start:      
+# Required-Stop:     
+# Default-Start:     S
+# Default-Stop:
+# Short-Description: Configures GPIO for Photosensor read.
+# Description:       Configures GPIO for Photosensor read.
+### END INIT INFO
+
+boardId=`cat /sys/devices/virtual/dmi/id/board_name`
+
+case "$1" in
+  start|restart|force-reload)
+    case $boardId in
+      "Galileo")
+  if [ ! -d /sys/class/gpio/gpio37 ] ; then
+	    echo -n "37" > /sys/class/gpio/export
+	fi
+	echo -n "out" > /sys/class/gpio/gpio37/direction
+	echo -n "0" > /sys/class/gpio/gpio37/value
+	
+  # gpio44 = in = neither pull-up nor pull-down (apparently)
+	if [ ! -d /sys/class/gpio/gpio44 ] ; then
+      echo -n "44" > /sys/class/gpio/export
+  fi
+  echo -n "in" > /sys/class/gpio/gpio44/direction
+
+  chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage0_scale
+  chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage0_scale
+  chgrp adc /sys/bus/iio/devices/iio:device0/scan_elements/in_voltage0_en
+  chmod g+rw /sys/bus/iio/devices/iio:device0/scan_elements/in_voltage0_en
+  chgrp adc /dev/iio:device0
+  chmod g+r /dev/iio:device0
+
+  chgrp adc /sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_en
+  chgrp adc /sys/bus/iio/devices/iio:device0/buffer/length
+  chgrp adc /sys/bus/iio/devices/iio:device0/buffer/enable
+  chgrp adc /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+  chmod g+rw /sys/bus/iio/devices/iio:device0/scan_elements/in_timestamp_en
+  chmod g+rw /sys/bus/iio/devices/iio:device0/buffer/length
+  chmod g+rw /sys/bus/iio/devices/iio:device0/buffer/enable
+  chmod g+rw /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+
+  modprobe iio-trig-sysfs
+  echo -n "0" > /sys/bus/iio/devices/iio_sysfs_trigger/add_trigger
+  chgrp adc /sys/bus/iio/devices/trigger0/trigger_now
+  chmod g+rw /sys/bus/iio/devices/trigger0/trigger_now
+
+  modprobe iio-trig-hrtimer
+  echo -n "1" > /sys/bus/iio/devices/iio_hrtimer_trigger/add_trigger
+  chgrp adc /sys/bus/iio/devices/trigger1/frequency
+  chmod g+rw /sys/bus/iio/devices/trigger1/frequency
+
+    ;;
+    esac
+    ;;
+  stop)
+    case $boardId in
+      "Galileo")
+	echo -n "37" > /sys/class/gpio/unexport
+  echo -n "44" > /sys/class/gpio/unexport
+
+  echo "\n" > /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+  echo -n "1" > /sys/bus/iio/devices/iio_hrtimer_trigger/remove_trigger
+  echo -n "0" > /sys/bus/iio/devices/iio_sysfs_trigger/remove_trigger
+  rmmod iio-trig-sysfs
+  rmmod iio-trig-hrtimer
+	;;
+    esac
+    ;;
+  status)
+    ;;
+  *)
+    echo -n "Usage: $0 " 
+    echo "{start|stop|restart|force-reload|status}"
+    exit 1
+    ;;
+esac
+
+exit 0

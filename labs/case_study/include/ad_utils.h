@@ -38,11 +38,11 @@ extern "C"
 /* Four sensores data struct for Galileo */
 struct sensors
 {
-        uint16_t a0;        /* be:u12/16>>0 */
-        uint16_t a1;        /* be:u12/16>>0 */
-        uint16_t a2;        /* be:u12/16>>0 */
-        uint16_t a3;        /* be:u12/16>>0 */
-        int64_t timestamp;  /* le:s64/64>>0 */
+        uint16_t a0;        // be:u12/16>>0 
+        /*uint16_t a1;        // be:u12/16>>0 
+        uint16_t a2;        // be:u12/16>>0
+        uint16_t a3;        // be:u12/16>>0*/
+        int64_t timestamp;  /// le:s64/64>>0 
 };
 
 extern float read_ad_scale(int ad_pin);
@@ -62,16 +62,16 @@ extern int disable_timestamp();
 extern int enable_timestamp();
 
 extern int set_current_trigger(int trigger);
-extern int disable_trigger(int trigger);
+extern int disable_trigger();
 
-extern int period_to_frequency(int period);
+extern int period_to_frequency(double period);
 extern int set_trigger_frequency(int trigger, int frequency);
-extern void sleep_for_total_sampling_time(int sampling_period, int data_points);
+extern void sleep_for_total_sampling_time(double sampling_period, int data_points);
 
 extern int trigger_sysfs(int trigger);
-extern void sleep_for_sampling_period(int sampling_period);
+extern void sleep_for_sampling_period(double sampling_period);
 
-extern int get_samples(struct sensors *data, int data_points);
+extern int get_samples(struct sensors data[], int data_points);
 extern uint16_t reverse_12_oof_16_aligned_0(uint16_t data);
 
 #ifdef __cplusplus

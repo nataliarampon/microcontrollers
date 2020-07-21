@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 #include <math.h>
 
 /**
@@ -155,6 +156,7 @@ int write_buffer_length(int data_points) {
 **/
 int set_current_trigger(int trigger) {
     char data_str[80], file_str[80];
+    memset(data_str, 0, sizeof data_str);
     snprintf(file_str, sizeof file_str, "/sys/bus/iio/devices/trigger%d/name", trigger);
     pgets(data_str,sizeof data_str,file_str);
     return pputs("/sys/bus/iio/devices/iio:device0/trigger/current_trigger",data_str);
@@ -164,7 +166,7 @@ int set_current_trigger(int trigger) {
     Disables trigger
     @return: number of bytes written to the current_trigger pseudo-file
 **/
-int disable_trigger(int trigger) {
+int disable_trigger() {
     return pputs("/sys/bus/iio/devices/iio:device0/trigger/current_trigger","\n");
 }
 
@@ -174,7 +176,7 @@ int disable_trigger(int trigger) {
     @param period: period in seconds
     @return: frequency in Hz
 **/
-int period_to_frequency(int period) {
+int period_to_frequency(double period) {
     return (int) round(1.0/period);
 }
 
@@ -206,7 +208,8 @@ int trigger_sysfs(int trigger) {
     Sleep for the given sampling period
     @param sampling_period: sampling period in seconds
 **/
-void sleep_for_sampling_period(int sampling_period) {
+void sleep_for_sampling_period(double sampling_period) {
+    printf("Sleeping for %.0lfus\n", ceil(sampling_period*1e6));
     usleep(ceil(sampling_period*1e6)); 
 }
 
@@ -215,7 +218,8 @@ void sleep_for_sampling_period(int sampling_period) {
     @param sampling_period: sampling period in seconds
     @param data_points: number of data_points
 **/
-void sleep_for_total_sampling_time(int sampling_period, int data_points) {
+void sleep_for_total_sampling_time(double sampling_period, int data_points) {
+    printf("Sleeping for %.0lfs\n", ceil(data_points*sampling_period));
     sleep(ceil(data_points*sampling_period));
 }
 
@@ -225,7 +229,7 @@ void sleep_for_total_sampling_time(int sampling_period, int data_points) {
     @param data_points: number of data_points to be read
     @return: number of samples effectively read into the data array
 **/
-int get_samples(struct sensors *data, int data_points) {
+int get_samples(struct sensors data[], int data_points) {
     int fd, samples;
 
     if((fd=open("/dev/iio:device0",O_RDONLY)) < 0){
@@ -233,6 +237,7 @@ int get_samples(struct sensors *data, int data_points) {
         return -1;
     }
 
+    printf("Data points: %d Total: %d\n", data_points, data_points*sizeof(struct sensors));
     samples=read(fd,data,data_points*sizeof(struct sensors))/sizeof(struct sensors);   // effective number of data points
     close(fd);
     return samples;

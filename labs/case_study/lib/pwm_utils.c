@@ -42,7 +42,7 @@ int frequency_to_period(int freq) {
     @param pwm_pin: the number of the pwm pin
     @return: the number of bytes written to the pwm pin period pseudo-file
 **/
-int write_period_to_pwm_(int period, int pwm_pin) {
+int write_period_to_pwm(int period, int pwm_pin) {
     char data_str[80], file_str[80];
     snprintf(data_str, sizeof data_str, "%d", period);
     snprintf(file_str, sizeof file_str, "/sys/class/pwm/pwmchip0/pwm%d/period", pwm_pin);
