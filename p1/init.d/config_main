@@ -16,51 +16,64 @@ case "$1" in
   start|restart|force-reload)
     case $boardId in
       "Galileo")
-  if [ ! -d /sys/class/gpio/gpio30 ] ; then
-	    echo -n "30" > /sys/class/gpio/export
-	fi
-	echo -n "out" > /sys/class/gpio/gpio30/direction
-	echo -n "1" > /sys/class/gpio/gpio30/value
+    if [ ! -d /sys/class/pwm/pwmchip0/pwm1 ] ; then
+      echo -n "1" > /sys/class/pwm/pwmchip0/export
+    fi
 
-  if [ ! -d /sys/class/gpio/gpio37 ] ; then
-      echo -n "37" > /sys/class/gpio/export
-  fi
-  echo -n "out" > /sys/class/gpio/gpio37/direction
-  echo -n "0" > /sys/class/gpio/gpio37/value
+    chgrp pwm /sys/class/pwm/pwmchip0/pwm1/period
+    chgrp pwm /sys/class/pwm/pwmchip0/pwm1/enable
+    chgrp pwm /sys/class/pwm/pwmchip0/pwm1/duty_cycle
+    chgrp pwm /sys/class/pwm/pwmchip0/device/pwm_period
+    chmod g+rw /sys/class/pwm/pwmchip0/pwm1/period
+    chmod g+rw /sys/class/pwm/pwmchip0/pwm1/enable
+    chmod g+rw /sys/class/pwm/pwmchip0/pwm1/duty_cycle
+    chmod g+rw /sys/class/pwm/pwmchip0/device/pwm_period
 
-  if [ ! -d /sys/class/gpio/gpio44 ] ; then
-      echo -n "44" > /sys/class/gpio/export
-  fi
-  echo -n "in" > /sys/class/gpio/gpio44/direction
-	
-	if [ ! -d /sys/class/pwm/pwmchip0/pwm3 ] ; then
-		echo -n "3" > /sys/class/pwm/pwmchip0/export
-	fi
+    if [ ! -d /sys/class/gpio/gpio20 ] ; then
+        echo -n "20" > /sys/class/gpio/export
+    fi
+    echo -n "out" > /sys/class/gpio/gpio20/direction
+    echo -n "0" > /sys/class/gpio/gpio20/value
 
-	chgrp pwm /sys/class/pwm/pwmchip0/pwm3/period
-	chgrp pwm /sys/class/pwm/pwmchip0/pwm3/enable
-  chgrp pwm /sys/class/pwm/pwmchip0/pwm3/duty_cycle
-  chgrp pwm /sys/class/pwm/pwmchip0/device/pwm_period
-	chmod g+rw /sys/class/pwm/pwmchip0/pwm3/period
-	chmod g+rw /sys/class/pwm/pwmchip0/pwm3/enable
-  chmod g+rw /sys/class/pwm/pwmchip0/pwm3/duty_cycle
-	chmod g+rw /sys/class/pwm/pwmchip0/device/pwm_period
-  
-  chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage0_raw
-  chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage0_scale
-  chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage0_raw
-  chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage0_scale
+    # gpio48 = in = neither pull-up nor pull-down
+    if [ ! -d /sys/class/gpio/gpio49 ] ; then
+      echo -n "49" > /sys/class/gpio/export
+    fi
+    echo -n "in" > /sys/class/gpio/gpio49/direction
+
+    chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage5_raw
+    chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage5_scale
+    chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage5_raw
+    chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage5_scale
+
+    if [ ! -d /sys/class/gpio/gpio21 ] ; then
+        echo -n "21" > /sys/class/gpio/export
+    fi
+    echo -n "out" > /sys/class/gpio/gpio21/direction
+    echo -n "0" > /sys/class/gpio/gpio21/value
+
+    # gpio48 = in = neither pull-up nor pull-down
+    if [ ! -d /sys/class/gpio/gpio48 ] ; then
+      echo -n "48" > /sys/class/gpio/export
+    fi
+    echo -n "in" > /sys/class/gpio/gpio48/direction
+
+    chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage4_raw
+    chgrp adc /sys/bus/iio/devices/iio:device0/in_voltage4_scale
+    chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage4_raw
+    chmod g+r /sys/bus/iio/devices/iio:device0/in_voltage4_scale
     ;;
     esac
     ;;
   stop)
     case $boardId in
       "Galileo")
-	echo -n "0" > /sys/class/pwm/pwmchip0/pwm3/enable
-  echo -n "3" > /sys/class/pwm/pwmchip0/unexport
-	echo -n "30" > /sys/class/gpio/unexport
-  echo -n "37" > /sys/class/gpio/unexport
-  echo -n "44" > /sys/class/gpio/unexport
+    	echo -n "0" > /sys/class/pwm/pwmchip0/pwm1/enable
+      echo -n "1" > /sys/class/pwm/pwmchip0/unexport
+      echo -n "20" > /sys/class/gpio/unexport
+      echo -n "48" > /sys/class/gpio/unexport
+      echo -n "21" > /sys/class/gpio/unexport
+      echo -n "49" > /sys/class/gpio/unexport
 	;;
     esac
     ;;
